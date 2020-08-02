@@ -19,6 +19,7 @@ class Song
       column_names << row["name"]
     end
     column_names.compact
+    
   end
 
   self.column_names.each do |col_name|
