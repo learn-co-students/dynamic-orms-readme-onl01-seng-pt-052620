@@ -3,7 +3,7 @@ require 'active_support/inflector'
 
 class Song
 
-
+ #now that we have a method that grabs us the table name we want to query for column names,
   def self.table_name
     self.to_s.downcase.pluralize
   end
@@ -11,21 +11,21 @@ class Song
   def self.column_names
     DB[:conn].results_as_hash = true
 
-    sql = "pragma table_info('#{table_name}')"
+    sql = "pragma table_info('#{table_name}')" ##table_name method (to access the name of the table we are querying)
 
     table_info = DB[:conn].execute(sql)
     column_names = []
     table_info.each do |row|
-      column_names << row["name"]
+      column_names << row["name"] #We call #compact on that just to be safe and get rid of any nil values that may end up in our collection.
     end
     column_names.compact
   end
 
-  self.column_names.each do |col_name|
+  self.column_names.each do |col_name| #Now that we have a method that returns us an array of column names, we can use this collection to create the attr_accessors of our Song class.
     attr_accessor col_name.to_sym
   end
 
-  def initialize(options={})
+  def initialize(options={}) #options, which defaults to an empty hash
     options.each do |property, value|
       self.send("#{property}=", value)
     end
